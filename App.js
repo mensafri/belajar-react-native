@@ -1,95 +1,112 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import {
+	ActivityIndicator,
+	Image,
+	ScrollView,
 	StyleSheet,
 	Text,
 	View,
-	Button,
-	TextInput,
-	useWindowDimensions,
 } from "react-native";
-import Komp from "./Komp";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer } from "@react-navigation/native";
-import Home from "./screens/Home";
-import Notif from "./screens/Notif";
-import Profil from "./screens/Profil";
-
-const Stack = createNativeStackNavigator();
 
 export default function App() {
-	// const [lebar, setLebar] = useState("");
-	// const [panjang, setPanjang] = useState("");
-	// const [hasil, setHasil] = useState("");
-	// const { height: tinggiLayar, width: lebarLayar } = useWindowDimensions();
+	const [data, setData] = useState();
+	const [loading, setLoading] = useState(true);
 
-	// useEffect(() => {
-	// 	if (lebar && panjang) {
-	// 		const luas = parseFloat(lebar) * parseFloat(panjang);
-	// 		setHasil(luas);
-	// 	} else {
-	// 		setHasil("");
-	// 	}
-	// }, [lebar, panjang]);
+	useEffect(() => {
+		async function getData() {
+			const response = await axios.get(
+				"http://192.168.100.110/DSAKUphp/stok.php",
+			);
+			setData(response.data);
+			setLoading(false);
+		}
 
-	// console.log(lebarLayar, tinggiLayar);
+		getData();
+	}, []);
 
-	// return (
-	// 	<View style={styles.container}>
-	// 		<View style={styles.inputContainer}>
-	// 			<Text>Lebar</Text>
-	// 			<TextInput
-	// 				style={styles.input}
-	// 				onChangeText={(res) => setLebar(res)}
-	// 				value={lebar}
-	// 				keyboardType="numeric"
-	// 			/>
-	// 		</View>
-	// 		<View style={styles.inputContainer}>
-	// 			<Text>Panjang</Text>
-	// 			<TextInput
-	// 				style={styles.input}
-	// 				onChangeText={(res) => setPanjang(res)}
-	// 				value={panjang}
-	// 				keyboardType="numeric"
-	// 			/>
-	// 		</View>
-	// 		<Text>Luas {hasil} </Text>
-	// 		<View
-	// 			style={{
-	// 				backgroundColor: "black",
-	// 				width: lebarLayar / 3,
-	// 				height: tinggiLayar / 2,
-	// 			}}></View>
-	// 			<Komp/>
-	// 	</View>
+	// console.log(data);
+	const formatRupiah = (number) => {
+		return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	};
+
+	if (loading) {
+		return (
+			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+				<ActivityIndicator size="large" />
+				<Text>Masih LOading.....</Text>
+			</View>
+		);
+	}
+
 	return (
-		<NavigationContainer>
-			<Stack.Navigator>
-				<Stack.Screen
-					name="Home"
-					component={Home}
-				/>
-				<Stack.Screen
-					name="Profil"
-					component={Profil}
-				/>
-				<Stack.Screen
-					name="Notif"
-					component={Notif}
-				/>
-			</Stack.Navigator>
-		</NavigationContainer>
+		<View style={styles.container}>
+			<View style={styles.header}>
+				<Text style={styles.headerText}>Nama</Text>
+				<Text style={styles.headerText}>Kode</Text>
+				<Text style={styles.headerText}>Harga</Text>
+				<Text style={styles.headerText}>Satuan</Text>
+				<Text style={styles.headerText}>Gambar</Text>
+			</View>
+			<ScrollView>
+				{data?.map((item, index) => (
+					<View
+						key={item.kode}
+						style={index % 2 === 0 ? styles.item1 : styles.item2}>
+						<Text style={styles.itemText}>{item.nama}</Text>
+						<Text style={styles.itemText}>{item.kode}</Text>
+						<Text style={styles.itemText}>
+							{formatRupiah(item.harga != null ? item.harga : 0)}
+						</Text>
+						<Text style={styles.itemText}>{item.satuan}</Text>
+						<Image
+							width={100}
+							height={100}
+							source={{
+								uri: `http://192.168.100.110/DSAKUphp/IMAGE/produk/${item.kode}.JPG`,
+							}}
+						/>
+					</View>
+				))}
+			</ScrollView>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
+		padding: 16,
+		marginTop: 10,
 	},
-	teks: {
-		color: "#ee510e",
+	header: {
+		flexDirection: "row",
+		borderBottomWidth: 1,
+		borderBottomColor: "#ccc",
+		paddingBottom: 8,
+		marginBottom: 8,
+	},
+	headerText: {
+		flex: 1,
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	item1: {
+		flexDirection: "row",
+		paddingVertical: 8,
+		borderBottomWidth: 1,
+		borderBottomColor: "#eee",
+		backgroundColor: "",
+	},
+	item2: {
+		flexDirection: "row",
+		paddingVertical: 8,
+		borderBottomWidth: 1,
+		borderBottomColor: "#eee",
+		backgroundColor: "#c2fbd7",
+	},
+	itemText: {
+		flex: 1,
+		textAlign: "center",
 	},
 });
