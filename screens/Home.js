@@ -5,16 +5,16 @@ import { useNavigation } from "@react-navigation/native";
 export default function Home() {
 	const navigation = useNavigation();
 
-	function keNotif() {
-		navigation.replace("Notif");
+	function keStok() {
+		navigation.navigate("Stok");
 	}
 
 	return (
 		<View style={styles.container}>
 			<Text>Home</Text>
 			<Button
-				title="Ke Notif"
-				onPress={keNotif}
+				title="Ke Stok"
+				onPress={keStok}
 			/>
 		</View>
 	);
