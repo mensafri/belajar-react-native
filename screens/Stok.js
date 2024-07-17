@@ -1,7 +1,9 @@
+import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	Alert,
 	Button,
 	Image,
 	ScrollView,
@@ -13,14 +15,22 @@ import {
 export default function Stok() {
 	const [data, setData] = useState();
 	const [loading, setLoading] = useState(true);
+	const navigation = useNavigation();
 
 	useEffect(() => {
 		async function getData() {
-			const response = await axios.get(
-				"http://192.168.100.110/DSAKUphp/stok.php",
-			);
-			setData(response.data);
-			setLoading(false);
+			try {
+				const response = await axios.get(
+					"http://71a30653f057.sn.mynetname.net:688/dsakuphp/stok.php",
+				);
+				setData(response.data);
+				setLoading(false);
+			} catch (error) {
+				// Alert.alert("Error", error.message, [
+				// 	{ text: "OK", onPress: navigation.goBack() },
+				// ]);
+				console.log(error);
+			}
 		}
 
 		getData();
@@ -43,7 +53,10 @@ export default function Stok() {
 	return (
 		<View style={styles.container}>
 			<View>
-				<Button title="Ke Home" />
+				<Button
+					title="Ke Home"
+					onPress={() => navigation.goBack()}
+				/>
 			</View>
 			<View style={styles.header}>
 				<Text style={styles.headerText}>Nama</Text>

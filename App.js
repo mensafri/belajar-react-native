@@ -4,7 +4,6 @@ import Home from "./screens/Home";
 import Notif from "./screens/Notif";
 import Profil from "./screens/Profil";
 import Stok from "./screens/Stok";
-import { Button, Text } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,15 +14,14 @@ export default function App() {
 				<Stack.Screen
 					name="Home"
 					component={Home}
-					options={{ headerShown: false }}
-				/>
-				<Stack.Screen
-					name="Notif"
-					component={Notif}
 				/>
 				<Stack.Screen
 					name="Profil"
 					component={Profil}
+				/>
+				<Stack.Screen
+					name="Notif"
+					component={Notif}
 				/>
 				<Stack.Screen
 					name="Stok"
